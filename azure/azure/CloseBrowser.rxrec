@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<recordtable
+id="d727fbf6-64da-4ba6-a16e-3c8d26ee6965"
+mode="Desktop">
+  <codegen classname="CloseBrowser" namespace="azure"/>
+  <name>
+      CloseBrowser
+  </name>
+  <recorditems>
+      <closeapprecorditem
+          enabled="True"
+          graceperiod="0ms"
+          method="CloseWindow"
+          optional="False">
+          <comment>
+          </comment>
+          <bindings>
+          </bindings>
+          <info id="9b56f806-9479-484b-a0f5-6d575d49aa6a"
+                sourcename="RepositoryEditor">
+              <path>
+                  /form[@processname='chrome']
+              </path>
+          </info>
+      </closeapprecorditem>
+  </recorditems>
+  <repository name="azureRepository" relativepath="azureRepository.rxrep">
+  </repository>
+</recordtable>

@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<modulegroupdoc>
+  <testsuiteentryhierarchy>
+    <flatlistofchildren>
+      <modulegroups
+      name="azure"
+      id="448c482c-c34d-4f3e-9f5a-6f09e7b9d03f"/>
+    </flatlistofchildren>
+    <childhierarchy>
+      <modulegroups
+      name="azure"
+      id="448c482c-c34d-4f3e-9f5a-6f09e7b9d03f"/>
+    </childhierarchy>
+  </testsuiteentryhierarchy>
+</modulegroupdoc>

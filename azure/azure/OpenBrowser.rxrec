@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<recordtable
+id="3f763d8c-285d-4747-ab1e-7515832ea030"
+mode="Desktop">
+  <codegen classname="OpenBrowser" namespace="azure"/>
+  <name>
+    OpenBrowser
+  </name>
+  <recorditems>
+    <openwebsiterecorditem
+        args=""
+        browser="chrome"
+        clearcache="False"
+        clearcookies="False"
+        enabled="True"
+        incognito="False"
+        instrument="True"
+        killexisting="False"
+        maximized="False"
+        optional="False">
+      <comment>
+      </comment>
+      <bindings>
+      </bindings>
+      <url>
+        https://www.ranorex.com
+      </url>
+    </openwebsiterecorditem>
+  </recorditems>
+  <repository name="azureRepository" relativepath="azureRepository.rxrep">
+  </repository>
+</recordtable>

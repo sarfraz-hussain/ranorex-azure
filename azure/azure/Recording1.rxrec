@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<recordtable
+id="a2297147-6c0a-4629-bab9-2897b8b8b13a"
+mode="Desktop">
+  <codegen classname="Recording1" namespace="azure"/>
+  <name>
+      Recording1
+  </name>
+  <recorditems/>
+  <repository name="azureRepository" relativepath="azureRepository.rxrep">
+  </repository>
+</recordtable>
