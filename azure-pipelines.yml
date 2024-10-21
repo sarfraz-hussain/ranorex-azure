@@ -1,0 +1,105 @@
+parameters:
+  - name: targetEnvironment
+    type: string
+    displayName: 'Target environment'
+    default: 'q-live'
+    values:
+      - 'p-live'
+      - 'p-edit'
+      - 'q-live'
+      - 'q-edit'
+      - 'k-live'
+      - 'k-edit'
+      - 'i-live'
+      - 'i-edit'
+      - 'q-live-internal'
+      - 'q-live-akamai'
+      - 'p-live-internal'
+      - 'p-live-akamai'
+  - name: dataRangeAgent1
+    displayName: 'Data range for job 1 (set to 0 to disable job 1)'
+    type: string
+    default: '1-2'
+  - name: dataRangeAgent2
+    type: string
+    displayName: 'Data range for job 2 (set to 0 to disable job 2)'
+    default: '0'
+  - name: dataRangeAgent3
+    type: string
+    displayName: 'Data range for job 3 (set to 0 to disable job 3)'
+    default: '0'
+  - name: maxParallelRuns
+    type: number
+    displayName: 'Max parallel runs'
+    default: 3
+  - name: jobTimeoutInMinutes
+    type: number
+    displayName: 'Timeout in minutes'
+    default: 300
+  - name: bcOrderIdFile
+    type: string
+    displayName: 'Beyond Compare OrderID File'
+    default: 'Disabled'
+    values:
+      - 'Disabled'
+      - 'Source'
+      - 'Target'
+
+jobs:
+  - job: Job_1
+    displayName: Agent job 1
+    timeoutInMinutes: ${{parameters.jobTimeoutInMinutes}}
+    pool:
+      name: TestAutomation
+    strategy:
+      maxParallel: ${{parameters.maxParallelRuns}}
+      matrix:
+        ${{ if ne(parameters.dataRangeAgent1, '0') }}:
+          JOB1:
+            data_range: ${{parameters.dataRangeAgent1}}
+            environment: ${{parameters.targetEnvironment}}
+            bcOrderIdFile: ${{parameters.bcOrderIdFile}}
+        ${{ if ne(parameters.dataRangeAgent2, '0') }}:
+          JOB2:
+            data_range: ${{parameters.dataRangeAgent2}}
+            environment: ${{parameters.targetEnvironment}}
+            bcOrderIdFile: ${{parameters.bcOrderIdFile}}
+        ${{ if ne(parameters.dataRangeAgent3, '0') }}:
+          JOB3:
+            data_range: ${{parameters.dataRangeAgent3}}
+            environment: ${{parameters.targetEnvironment}}
+            bcOrderIdFile: ${{parameters.bcOrderIdFile}}
+    steps:
+      - checkout: self
+      - task: NuGetToolInstaller@0
+        displayName: Use NuGet 4.4.1
+        inputs:
+          versionSpec: 4.4.1
+      - task: NuGetCommand@2
+        displayName: NuGet restore
+        inputs:
+          solution: $(System.DefaultWorkingDirectory)/Ranorex-E2E/ABC.sln
+      - task: VSBuild@1
+        displayName: Build solution ABC.sln
+        inputs:
+          solution: $(System.DefaultWorkingDirectory)/Ranorex-E2E/ABC.sln
+          configuration: 'debug'
+      - task: RanorexRunTestExe@1
+        displayName: Run Ranorex test
+        timeoutInMinutes: ${{parameters.jobTimeoutInMinutes}}
+        inputs:
+          testExePath: $(System.DefaultWorkingDirectory)\Ranorex-E2E\SmartCom\bin\Debug\ABC.exe
+          attachReport: true
+          reportName: 'Report\Report_$(Agent.Name)_DataRange_$(data_range)'
+          advancedCmdLine: /tcdr:Orders=$(data_range) /pa:URL_CLI_ARG=$(environment) /pa:CLI_BC_SYSTEM=$(bcOrderIdFile)
+      - task: PowerShell@2
+        condition: canceled()
+        inputs:
+          targetType: 'inline'
+          script: Copy-Item (Get-Childitem -Path $Env:temp  -Include Report_$(Agent.Name)_DataRange_$(data_range).rxlog -recurse -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1).Directory.FullName -Destination "$(System.DefaultWorkingDirectory)\Ranorex-E2E\SmartCom\bin\Debug\" -Recurse
+      - task: PublishBuildArtifacts@1
+        condition: canceled()
+        inputs:
+          PathtoPublish: '$(System.DefaultWorkingDirectory)\Ranorex-E2E\SmartCom\bin\Debug\Report'
+          ArtifactName: 'Ranorex Reports'
+          publishLocation: 'Container'
